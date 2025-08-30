@@ -1,0 +1,87 @@
+import json
+import os
+FILE_NAME = "todo_list.json"
+def load_tasks():
+    """Loads tasks from a JSON file."""
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, 'r') as file:
+            return json.load(file)
+    return []
+def save_tasks(tasks):
+    """Saves tasks to a JSON file."""
+    with open(FILE_NAME, 'w') as file:
+        json.dump(tasks, file, indent=4)
+def add_task(tasks):
+    """Adds a new task to the list."""
+    task_name = input("Enter the task: ")
+    if task_name:
+        tasks.append({"task": task_name, "completed": False})
+        print(f"'{task_name}' added to your to-do list.")
+        save_tasks(tasks)
+    else:
+        print("Task cannot be empty.")
+def view_tasks(tasks):
+    """Displays all tasks in the list."""
+    if not tasks:
+        print("Your to-do list is empty! 🎉")
+        return
+    print("\n📝 Your To-Do List:")
+    for i, task in enumerate(tasks, 1):
+        status = "✅" if task["completed"] else "❌"
+        print(f"{i}. {status} {task['task']}")
+def mark_complete(tasks):
+    """Marks a task as completed."""
+    view_tasks(tasks)
+    if not tasks:
+        return
+    try:
+        task_num = int(input("Enter the number of the task to mark as complete: "))
+        if 1 <= task_num <= len(tasks):
+            tasks[task_num - 1]["completed"] = True
+            print(f"Task '{tasks[task_num - 1]['task']}' marked as complete.")
+            save_tasks(tasks)
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Please enter a valid number.")
+def delete_task(tasks):
+    """Deletes a task from the list."""
+    view_tasks(tasks)
+    if not tasks:
+        return
+    try:
+        task_num = int(input("Enter the number of the task to delete: "))
+        if 1 <= task_num <= len(tasks):
+            removed_task = tasks.pop(task_num - 1)
+            print(f"Task '{removed_task['task']}' deleted.")
+            save_tasks(tasks)
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Please enter a valid number.")
+def main():
+    """Main function to run the To-Do List application."""
+    tasks = load_tasks()
+    while True:
+        print("\n--- To-Do List Menu ---")
+        print("1. Add a task")
+        print("2. View all tasks")
+        print("3. Mark a task as complete")
+        print("4. Delete a task")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+        if choice == '1':
+            add_task(tasks)
+        elif choice == '2':
+            view_tasks(tasks)
+        elif choice == '3':
+            mark_complete(tasks)
+        elif choice == '4':
+            delete_task(tasks)
+        elif choice == '5':
+            print("Goodbye! 👋")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+if __name__ == "__main__":
+    main()
